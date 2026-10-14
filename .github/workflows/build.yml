@@ -1,0 +1,53 @@
+name: Build Windows installer
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find project folder (where package.json lives)
+        shell: bash
+        run: |
+          f=$(find . -name package.json -not -path "*/node_modules/*" | head -n 1)
+          if [ -z "$f" ]; then
+            echo "::error::package.json не найден в репозитории. Загрузите ВСЕ файлы проекта (src, build, package.json), а не только build.yml."
+            ls -R . | head -50
+            exit 1
+          fi
+          dir=$(dirname "$f")
+          echo "Project dir: $dir"
+          echo "APP_DIR=$dir" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        shell: bash
+        working-directory: ${{ env.APP_DIR }}
+        run: npm install --no-audit --no-fund
+
+      - name: Check required files
+        shell: bash
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          for p in src/main.js src/preload.js src/renderer/index.html build/icon.ico build/icon.png; do
+            [ -f "$p" ] || { echo "::error::Нет файла $p"; exit 1; }
+          done
+
+      - name: Build installer
+        shell: bash
+        working-directory: ${{ env.APP_DIR }}
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npm run dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RedshiftLauncher-Setup
+          path: ${{ env.APP_DIR }}/dist/*.exe
+          if-no-files-found: error
