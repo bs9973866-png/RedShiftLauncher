@@ -1,0 +1,8 @@
+{
+  "supabaseUrl": "https://hkyuclomrgnochqslqlp.supabase.co",
+  "supabaseKey": "PASTE-THE-PUBLISHABLE-KEY-FROM-THE-WEBSITE-HERE (sb_publishable_... or anon). Never the secret / service_role key.",
+  "siteUrl": "https://your-redshift-website.example",
+  "msClientId": "",
+  "skinsBucket": "skins",
+  "skinPathTemplate": "{uid}/skin.png"
+}

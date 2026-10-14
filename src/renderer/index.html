@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>Redshift Launcher</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-accent="redshift">
+
+<div class="bg">
+  <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+  <canvas id="stars"></canvas>
+</div>
+
+<header class="titlebar">
+  <div class="tb-title"><img src="assets/logo.png" alt="">Redshift Launcher</div>
+  <div class="wc">
+    <button id="wMin" title="Свернуть"><svg viewBox="0 0 12 12"><path d="M2 6h8"/></svg></button>
+    <button id="wMax" title="Развернуть"><svg viewBox="0 0 12 12"><rect x="2.2" y="2.2" width="7.6" height="7.6" rx="1"/></svg></button>
+    <button id="wClose" class="close" title="Закрыть"><svg viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7"/></svg></button>
+  </div>
+</header>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <img src="assets/logo.png" alt="">
+      <div><b>REDSHIFT</b><small>LAUNCHER</small></div>
+    </div>
+
+    <nav id="nav">
+      <i class="indicator" id="navInd"></i>
+      <button data-page="play" class="active">
+        <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg><span>Играть</span>
+      </button>
+      <button data-page="mods">
+        <svg viewBox="0 0 24 24"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Моды</span>
+      </button>
+      <button data-page="packs">
+        <svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 13l9 5 9-5"/><path d="M3 17.5l9 5 9-5"/></svg><span>Модпаки</span>
+      </button>
+      <button data-page="skins">
+        <svg viewBox="0 0 24 24"><path d="M20.4 14.5L16 10 4 20"/><circle cx="12" cy="7" r="4"/><path d="M5 21c.5-3 2-5 4-6"/></svg><span>Скины</span>
+      </button>
+      <button data-page="account">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Аккаунты</span>
+      </button>
+      <button data-page="settings">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span>Настройки</span>
+      </button>
+    </nav>
+
+    <button class="chip" id="chip" title="Аккаунты">
+      <span class="chip-face" id="chipFace"></span>
+      <span class="chip-text"><b id="chipName">Нет аккаунта</b><small id="chipType">Нажмите, чтобы войти</small></span>
+    </button>
+  </aside>
+
+  <main id="main">
+
+    <!-- ============ PLAY ============ -->
+    <section id="page-play" class="page active">
+      <div class="hero glass">
+        <div class="hero-info">
+          <div class="eyebrow">Выбранная сборка</div>
+          <h1 id="heroName">Создайте первую сборку</h1>
+          <div class="badges" id="heroBadges"></div>
+
+          <div class="hero-actions">
+            <button class="play" id="btnPlay"><span>ИГРАТЬ</span><i></i></button>
+            <button class="btn ghost danger" id="btnKill" hidden>Остановить</button>
+          </div>
+          <div class="hero-tools">
+            <button class="btn ghost sm" id="btnOptimize">⚡ Оптимизировать FPS</button>
+            <button class="btn ghost sm" id="btnOpenInst">Открыть папку</button>
+            <button class="btn ghost sm danger" id="btnDelInst">Удалить</button>
+          </div>
+
+          <div class="progress">
+            <div class="ptext" id="statusText">Готов к запуску</div>
+            <div class="bar"><i id="barFill"></i></div>
+          </div>
+        </div>
+        <div class="hero-skin" id="heroSkin"></div>
+      </div>
+
+      <div class="section-head">
+        <h2>Сборки</h2>
+        <button class="btn" id="btnNew">+ Новая сборка</button>
+      </div>
+      <div class="grid" id="instGrid"></div>
+
+      <details class="consolebox" id="consoleBox">
+        <summary>Журнал запуска</summary>
+        <pre id="log"></pre>
+      </details>
+    </section>
+
+    <!-- ============ MODS ============ -->
+    <section id="page-mods" class="page">
+      <div class="section-head"><h1>Моды и контент</h1></div>
+      <div class="hint" id="modHint"></div>
+
+      <div class="tabs" id="modTabs">
+        <button data-tab="catalog" class="active">Каталог</button>
+        <button data-tab="installed">Установлено</button>
+      </div>
+
+      <div class="toolbar">
+        <div class="seg" id="modSource">
+          <button data-v="modrinth" class="active">Modrinth</button>
+          <button data-v="curseforge">CurseForge</button>
+        </div>
+        <div class="seg" id="modKind">
+          <button data-v="mod" class="active">Моды</button>
+          <button data-v="resourcepack">Ресурспаки</button>
+          <button data-v="shader">Шейдеры</button>
+        </div>
+        <div class="search grow">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="modQuery" placeholder="Поиск…" autocomplete="off">
+        </div>
+        <button class="btn" id="btnSearch">Найти</button>
+      </div>
+
+      <div id="modList" class="list"></div>
+      <div id="modMore" class="more" hidden><button class="btn ghost" id="btnMore">Показать ещё</button></div>
+    </section>
+
+
+    <!-- ============ MODPACKS ============ -->
+    <section id="page-packs" class="page">
+      <div class="section-head">
+        <h1>Модпаки</h1>
+        <div class="row nomargin">
+          <button class="btn ghost" id="btnImportPack">⭳ Импорт из файла</button>
+          <button class="btn ghost" id="btnExportPack">⭱ Экспорт сборки</button>
+        </div>
+      </div>
+      <div class="hint" id="packHint">Скачивайте готовые сборки из Modrinth и CurseForge — лаунчер сам поставит нужную версию игры, загрузчик и все моды. Импорт понимает .mrpack и CurseForge .zip.</div>
+
+      <div class="toolbar">
+        <div class="seg" id="packSource">
+          <button data-v="modrinth" class="active">Modrinth</button>
+          <button data-v="curseforge">CurseForge</button>
+        </div>
+        <div class="search grow">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="packQuery" placeholder="Найти модпак…" autocomplete="off">
+        </div>
+        <button class="btn" id="btnPackSearch">Найти</button>
+        <label class="check tight"><input type="checkbox" id="packSaves"><i></i>Экспорт с мирами</label>
+      </div>
+
+      <div class="packprog" id="packProg" hidden>
+        <div class="ptext" id="packText"></div>
+        <div class="bar"><i id="packBar"></i></div>
+      </div>
+
+      <div id="packList" class="list"></div>
+      <div id="packMore" class="more" hidden><button class="btn ghost" id="btnPackMore">Показать ещё</button></div>
+    </section>
+
+    <!-- ============ SKINS ============ -->
+    <section id="page-skins" class="page">
+      <div class="section-head"><h1>Скины</h1></div>
+      <div class="skins-layout">
+        <div class="skin-card glass">
+          <div class="skin-stage" id="skinStage"></div>
+          <div class="skin-controls">
+            <button class="btn ghost sm" id="skinWalk">Ходьба: вкл</button>
+            <button class="btn ghost sm" id="skinAuto">Вращение: вкл</button>
+            <button class="btn ghost sm" id="skinFront">Спереди</button>
+            <button class="btn ghost sm" id="skinBack">Сзади</button>
+          </div>
+        </div>
+
+        <div class="skin-side">
+          <div class="card glass">
+            <h3 id="skinWho">Нет аккаунта</h3>
+            <p class="muted" id="skinInfo"></p>
+            <div class="row">
+              <button class="btn" id="btnSkinUpload">Загрузить скин (PNG)</button>
+              <button class="btn ghost danger" id="btnSkinReset">Сбросить</button>
+            </div>
+            <label class="lbl">Модель рук</label>
+            <div class="seg" id="skinModel">
+              <button data-v="classic" class="active">Классика (Steve)</button>
+              <button data-v="slim">Тонкие (Alex)</button>
+            </div>
+            <p class="muted small" id="skinNote"></p>
+          </div>
+          <div class="card glass">
+            <h3>Как это работает</h3>
+            <p class="muted small">Для оффлайн-аккаунта лаунчер поднимает маленький локальный сервер скинов и подключает его через authlib-injector, поэтому свой скин виден вам в игре.
+              На чужих серверах другие игроки его не увидят — так устроен оффлайн-режим. Для Ely.by скин меняется на сайте ely.by.</p>
+            <button class="btn ghost sm" id="btnElySite">Открыть ely.by</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ACCOUNTS ============ -->
+    <section id="page-account" class="page">
+      <div class="section-head"><h1>Аккаунты</h1></div>
+
+      <div class="card glass rs-card">
+        <div id="rsOut">
+          <h3>REDSHIFT ID <span class="tag">общий с сайтом</span></h3>
+          <p class="muted small">Войдите той же почтой и паролем, что и на сайте REDSHIFT: ник и скин будут общими для сайта и лаунчера.</p>
+          <div class="field"><input id="rsEmail" type="email" placeholder="E-mail" autocomplete="username"></div>
+          <div class="field"><input id="rsPass" type="password" placeholder="Пароль" autocomplete="current-password"></div>
+          <div class="row"><button class="btn" id="btnRsLogin">Войти</button><button class="btn ghost" id="btnRsSite2">Регистрация на сайте</button><span id="rsMsg" class="msg"></span></div>
+        </div>
+        <div id="rsIn" hidden>
+          <div class="rs-head">
+            <div class="face big" id="rsFace"></div>
+            <div class="meta"><b id="rsName"></b><span id="rsMail"></span><span class="status" id="rsStatus"></span></div>
+          </div>
+          <div class="row">
+            <input id="rsNick" placeholder="Игровой ник" maxlength="16" class="grow">
+            <button class="btn ghost sm" id="btnRsNick">Сменить ник</button>
+          </div>
+          <div class="row">
+            <button class="btn" id="btnRsAccount">Мой аккаунт</button>
+            <button class="btn ghost" id="btnRsSkin">Обновить скин</button>
+            <button class="btn ghost" id="btnRsUpload">Загрузить скин…</button>
+            <button class="btn ghost danger" id="btnRsLogout">Выйти</button>
+          </div>
+          <span id="rsMsgIn" class="msg"></span>
+        </div>
+      </div>
+
+      <div class="card glass">
+        <h3>Лицензия Minecraft (Microsoft) <span class="tag">Java Edition</span></h3>
+        <p class="muted small">Вход в лицензионный аккаунт: лаунчер покажет код, вы введёте его на странице Microsoft. Пароль в лаунчер не вводится.</p>
+        <div class="row"><button class="btn" id="btnMs">Войти через Microsoft</button><button class="btn ghost" id="btnMsCancel" hidden>Отмена</button><span id="msMsg" class="msg"></span></div>
+        <div class="codebox" id="msCodeBox" hidden>
+          <div class="muted small">Введите этот код на странице Microsoft (она откроется сама):</div>
+          <div class="code" id="msCode"></div>
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="card glass">
+          <h3>Вход через Ely.by</h3>
+          <div class="field"><input id="elyLogin" placeholder="Ник или e-mail"></div>
+          <div class="field"><input id="elyPass" type="password" placeholder="Пароль"></div>
+          <div class="field" id="rowTotp" hidden><input id="elyTotp" placeholder="Код двухфакторной защиты"></div>
+          <div class="row"><button class="btn" id="btnEly">Войти</button><span id="elyMsg" class="msg"></span></div>
+        </div>
+        <div class="card glass">
+          <h3>Оффлайн-ник</h3>
+          <div class="field"><input id="offName" placeholder="Ник (3–16 символов)"></div>
+          <div class="row"><button class="btn ghost" id="btnOff">Добавить</button></div>
+          <p class="muted small">Оффлайн-аккаунт подходит для одиночной игры и серверов без лицензии. Свой скин можно задать на вкладке «Скины».</p>
+        </div>
+      </div>
+      <div id="accList" class="list"></div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section id="page-settings" class="page">
+      <div class="section-head"><h1>Настройки</h1><span id="saveMsg" class="msg"></span></div>
+      <div class="tabs" id="setTabs">
+        <button data-tab="general" class="active">Основные</button>
+        <button data-tab="perf">Производительность</button>
+        <button data-tab="look">Внешний вид</button>
+      </div>
+
+      <div class="tabpane active" id="set-general">
+        <div class="card glass">
+          <label class="lbl">Окно игры</label>
+          <div class="row">
+            <input id="width" type="number" min="0" placeholder="Ширина" class="num">
+            <span class="muted">×</span>
+            <input id="height" type="number" min="0" placeholder="Высота" class="num">
+            <label class="check"><input type="checkbox" id="fullscreen"><i></i>Полный экран</label>
+          </div>
+          <p class="muted small">0 × 0 — размер по умолчанию.</p>
+
+          <label class="lbl">Поведение лаунчера при запуске игры</label>
+          <div class="seg" id="behavior">
+            <button data-v="keep">Оставить открытым</button>
+            <button data-v="minimize">Свернуть</button>
+          </div>
+
+          <label class="lbl">Путь к Java (пусто — скачать автоматически)</label>
+          <div class="field"><input id="javaPath" placeholder="C:\Program Files\Java\...\bin\javaw.exe"></div>
+
+          <label class="lbl">API-ключ CurseForge <a href="#" id="cfLink">получить бесплатно</a></label>
+          <div class="field"><input id="cfKey" type="password" placeholder="$2a$10$…"></div>
+
+          <label class="lbl">Supabase Publishable Key (REDSHIFT ID)</label>
+          <div class="field"><input id="sbKey" type="password" placeholder="sb_publishable_… или eyJ…"></div>
+          <p class="muted small">Публичный ключ из настроек сайта REDSHIFT. Секретный (service_role) ключ сюда вставлять нельзя.</p>
+
+          <label class="lbl">Адрес сайта REDSHIFT</label>
+          <div class="field"><input id="siteUrl" placeholder="https://…"></div>
+
+          <label class="lbl">Microsoft Client ID (для лицензионных аккаунтов)</label>
+          <div class="field"><input id="msClientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"></div>
+
+          <div class="row"><button class="btn ghost" id="btnOpenData">Открыть папку данных</button></div>
+        </div>
+      </div>
+
+      <div class="tabpane" id="set-perf">
+        <div class="card glass">
+          <div class="sysinfo" id="sysInfo"></div>
+
+          <label class="lbl">Оперативная память: <b id="ramVal"></b> МБ <button class="link" id="ramAuto">рекомендуемая</button></label>
+          <input type="range" id="ram" min="1024" max="16384" step="256">
+
+          <label class="lbl">Профиль JVM</label>
+          <div class="seg wrap" id="jvmPreset"></div>
+          <p class="muted small" id="presetNote"></p>
+
+          <label class="lbl">Свои аргументы JVM</label>
+          <div class="field"><input id="jvmArgs" placeholder="-XX:+UseZGC -Dfoo=bar"></div>
+        </div>
+
+        <div class="card glass">
+          <h3>Настройки видео для FPS</h3>
+          <label class="check"><input type="checkbox" id="autoVideo"><i></i>Применять быстрые настройки видео к новым сборкам</label>
+          <label class="lbl">Уровень</label>
+          <div class="seg" id="videoLevel">
+            <button data-v="balanced">Сбалансированный</button>
+            <button data-v="extreme">Максимум FPS</button>
+          </div>
+          <p class="muted small">Дальность прорисовки, частицы, тени, облака, VSync и т.п. Кнопка «⚡ Оптимизировать FPS» на главной ещё и ставит оптимизирующие моды (Sodium / Embeddium, Lithium, FerriteCore, ModernFix и др.).</p>
+        </div>
+      </div>
+
+      <div class="tabpane" id="set-look">
+        <div class="card glass">
+          <label class="lbl">Цветовая тема</label>
+          <div class="swatches" id="swatches"></div>
+          <label class="check"><input type="checkbox" id="anim"><i></i>Анимации интерфейса</label>
+          <label class="check"><input type="checkbox" id="particles"><i></i>Фоновые звёзды</label>
+          <label class="check"><input type="checkbox" id="showLog"><i></i>Всегда раскрывать журнал запуска</label>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- create instance modal -->
+<div class="modal" id="modal" hidden>
+  <div class="sheet glass">
+    <h2>Новая сборка</h2>
+    <div class="field"><input id="newName" placeholder="Название"></div>
+    <div class="row">
+      <select id="newType">
+        <option value="release">Релизы</option>
+        <option value="snapshot">Снапшоты</option>
+        <option value="old_beta">Old beta</option>
+        <option value="old_alpha">Old alpha</option>
+        <option value="all">Все версии</option>
+      </select>
+      <select id="newVersion" class="grow"></select>
+    </div>
+    <label class="lbl">Загрузчик</label>
+    <div class="seg wrap" id="newLoader">
+      <button data-v="vanilla" class="active">Vanilla</button>
+      <button data-v="fabric">Fabric</button>
+      <button data-v="quilt">Quilt</button>
+      <button data-v="forge">Forge</button>
+      <button data-v="neoforge">NeoForge</button>
+    </div>
+    <label class="check"><input type="checkbox" id="newFps" checked><i></i>Сразу оптимизировать FPS (моды + настройки видео)</label>
+    <div class="row end">
+      <button class="btn ghost" id="btnCancelNew">Отмена</button>
+      <button class="btn" id="btnCreate">Создать</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+<script src="skin3d.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
